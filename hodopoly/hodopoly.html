@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>SVG Cubic B&#233;zier Curve Example</title>
+</head>
+<link rel="stylesheet" type="text/css" media="all" href="styles.css" />
+<body>
+    <!-- https://blogs.sitepointstatic.com/examples/tech/svg-curves/cubic-curve.html -->
+<h1> Hodograph Control Curve </h1>
+
+<object id="svg" type="image/svg+xml" data="hodopoly.svg.xml" class="C">Your browser does not support SVG</object>
+<pre id="code">code</pre>
+
+<p>Drag the line ends or the control points to change the curve. </p>
+
+<h2>Disclaimer</h2>
+<p>This code can be used without any restrictions.</p>
+<p>This code is based on <a href="https://blogs.sitepointstatic.com/examples/tech/svg-curves/cubic-curve.html">the source code</a> and <a href="http://sitepoint.com">SitePoint.com.</a> </p>
+
+<h2> Select curve types to draw: </h2>
+<input name = "curvetype" type="checkbox" value="Polygon" checked> Control Polygon
+<div style="color:blue;"> <input name = "curvetype" type="checkbox" value="GLeg" checked> Gauss-Legendre curve </div>
+<div style="color:red;"> <input name = "curvetype" type="checkbox" value="GLob"> Gauss-Lobatto curve </div>
+<div style="color:black;"> </div><input name = "curvetype" type="checkbox" value="Bezier"> Bezier curve </div>
+
+<h2> Add/Remove control points: </h2>
+<input id = "addbtn" type="button" value="add a point" onclick="">
+<input id = "rmvbtn" type="button" value="remove the last point" onclick="">
+
+
+<script type="text/javascript" src="hodopoly.js"></script>
+</body>
+</html>
