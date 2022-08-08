@@ -1765,6 +1765,7 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
             new_pt.setAttributeNS(null, 'r', 8); 
     
             main.appendChild(new_pt);
+            ptCount ++;
             return true;
         }
         return false;
@@ -1790,9 +1791,61 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
             let lastpt = c[c.length-1];
             let parent = lastpt.parentNode; // parent == main
             parent.removeChild(lastpt);
+            ptCount --;
             return true;
         }
         return false;
+    }
+
+    function ex01() {
+        // x0, y0, x1, y1, ..., xn, yn
+        let coord = [44,335,114,161,71,142,127,320,201,194,249,327,296,184,190,203,294,211,370,182,394,332,446,197,489,258,600,241,553,196,510,299,573,322,611,291];
+        setCtrlPtsFromCoordinates(coord);
+    }
+
+    function ex02() {
+        let coord = [46,310,125,143,71,142,127,320,205,186,215,322,296,184,190,203,295,197,370,182,394,332,442,174,489,258,600,241,553,196,518,327,617,262];
+        setCtrlPtsFromCoordinates(coord);
+    }
+
+    function setCtrlPtsFromCoordinates(coord) {
+        let n = Math.floor(coord.length/2);
+        let ctlptlist = [];
+        for(let i = 0; i < n; i++) {
+            ctlptlist.push([coord[i*2],coord[i*2+1]]);
+        }
+        if(setCtrlPts(ctlptlist)) {
+            construct_points();
+            DrawSVG();
+        }
+    }
+
+    function setCtrlPts(ctlptlist) {
+        let n = ctlptlist.length;
+        if(n < 2) return false;
+        n = Math.min(n, max_deg+1);
+
+        let c, i, m;
+        m = Math.min(n, ptCount);
+
+        c = svg.getElementsByTagName("circle");
+    	for (i = 0; i < m; i++) {
+            c[i].setAttributeNS(null, "cx", ctlptlist[i][0]);
+            c[i].setAttributeNS(null, "cy", ctlptlist[i][1]);
+        }
+
+        let ret = true, num = ptCount - n;
+        if(num > 0) {
+            for(i=0; ret && i < num; i++) {
+                ret &&= removeLastPt();
+            }
+        } else if(num < 0) {
+            for(i=m; ret && i < n; i++) {
+                ret &&= addpoint(ctlptlist[i][0], ctlptlist[i][1]);
+            }
+        }
+
+        return ret;
     }
 
     // construct points
@@ -1840,6 +1893,11 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 
         btn = document.getElementById("rmvbtn");
         btn.onclick = ClickRemoveLastPoint;
+
+        btn = document.getElementById("ex01btn");
+        btn.onclick = ex01;
+        btn = document.getElementById("ex02btn");
+        btn.onclick = ex02;
 
         let chkboxes = document.getElementsByName("curvetype");
         for(let i=0; i < chkboxes.length; i++) {
@@ -1972,7 +2030,8 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 
 		// show code
 		if (code) {
-			code.textContent = '<path d="'+d+'" />';
+			// code.textContent = '<path d="'+d+'" />';
+            code.textContent = ctlptlist;
 		}
 
         //curve length
@@ -2066,9 +2125,7 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 			maxX = container.offsetWidth-1;
 			maxY = container.offsetHeight-1;
 			svg = container.contentDocument;// need "% python3 -m http.server" in terminal
-			Init();
-
-            
+			Init();            
 		}
 	}
 	
