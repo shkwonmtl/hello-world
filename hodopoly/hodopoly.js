@@ -36,7 +36,7 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
         'Polygon',
         'Gauss-Legendre',
         'Gauss-Lobatto',
-        'Bezier'
+        'Bézier'
     ];
     
     const data = {
