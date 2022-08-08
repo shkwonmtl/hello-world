@@ -29,6 +29,42 @@
 <input id = "rmvbtn" type="button" value="remove the last point" onclick="">
 
 
-<script type="text/javascript" src="hodopoly.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- <script type="module" src="hodo.js"></script> -->
+<!-- <script type="text/javascript" src="hodopoly.js"></script> -->
+<script type="module" src="hodopoly.js"></script>
+<div>
+    <canvas id="myChart" width = "500" height="120"></canvas>
+</div>
+
+<!-- <script>
+    const labels = [
+      'Polygon',
+      'Gauss-Legendre',
+      'Gauss-Lobatto',
+    ];
+  
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'Length',
+        backgroundColor: ['rgba(0, 0, 0, 0.2)', 'rgba(0, 0, 255, 0.2)', 'rgba(255, 0, 0, 0.2)'],
+        borderColor: ['rgb(0, 0, 0)','rgb(0, 0, 255)', 'rgb(255, 0, 0)'],
+        data: [69.3, 69.2, 68.5],
+      }]
+    };
+  
+    const config = {
+      type: 'bar',
+      data: data,
+      options: {}
+    };
+    const myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+  </script> -->
 </body>
 </html>
