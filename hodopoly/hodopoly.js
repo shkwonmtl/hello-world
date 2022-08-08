@@ -303,9 +303,10 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 		}
 
     
+        let ctlpolygonLen = computePolygonLength(ctlptlist);
         if(curve_type.Polygon) {
             pg.setAttributeNS(null,"points", pts);
-            polygonLen = computePolygonLength(ctlptlist);
+            polygonLen = ctlpolygonLen;
             // for(let i=0; i < c.length; i++) {
             //     point[c[i]].style.color = "red";
             // }
@@ -329,7 +330,7 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 		// 	d += "L" + point[c[i]].x + "," + point[c[i]].y;
 		// }
         // let ndiv = 40*ptCount; //200;
-        let ndiv = Math.floor(polygonLen/3)+1;
+        let ndiv = Math.floor(ctlpolygonLen/3)+1;
         // let ndivSimpson = 100;
         let ndivSimpson = Math.floor(ndiv/2)+1;
 
