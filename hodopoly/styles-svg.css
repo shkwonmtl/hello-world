@@ -31,6 +31,43 @@
 	fill: none;
 }
 
+#unitlen
+{
+    stroke-width: 4;
+	stroke: black;
+	stroke-linecap: round;
+    fill: none;
+}
+
+.glegcircle
+{
+	stroke-width: 2;
+	stroke: blue;
+	fill: blue;
+}
+
+.globcircle
+{
+	stroke-width: 2;
+	stroke: red;
+	fill:red;
+}
+
+.velocity
+{
+    stroke:#000;
+    stroke-width:1;
+    marker-end:url(#arrowhead);
+    marker-start:url(#startarrow);
+}
+
+#velstartpt
+{
+	stroke-width: 1;
+	stroke:black;
+	fill:black;    
+}
+
 path
 {
 	stroke-width: 8;
@@ -57,13 +94,13 @@ circle:hover
 	cursor: move;
 }
 
-line
+/* line
 {
 	stroke-width: 1;
 	stroke: #999;
 	stroke-linecap: round;
 	stroke-dasharray: 5,3;
-}
+} */
 
 polyline
 {

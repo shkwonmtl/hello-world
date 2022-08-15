@@ -6,7 +6,8 @@
  */
 
 import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getDerivList, getSVG_controlPoly, 
-    computePolygonLength, getPolyCurvePt, getPolyCurvePtNorm, getArcLengthFromPolyDerivSimpson} from './hodo.js';
+    computePolygonLength, getPolyCurvePt, getPolyCurvePtNorm, getArcLengthFromPolyDerivSimpson,
+    getCurvePts, addSVGCircles, removeSVGElementsByTagName, getVelocityAtNodes, GLobNW, GLegNW, addSVGArrows } from './hodo.js';
 
 
 // GLobF, GLegF, BernF, 
@@ -24,6 +25,10 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
     let GLobPolyDList = [], GLegPolyDList = [], BernPolyDList = [];
     let polygonLen = 0, GLobLen = 0, GLegLen = 0, BezierLen = 0;
     let max_deg = GLobF.length;
+    let main, sub;
+    let ndiv_EqParamPts = 10;
+    let radius_ParamPts = 4;
+    let scale_velos = 0.1;
 
     let curve_type = {
         Polygon:true,
@@ -31,6 +36,11 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
         GLob:true, 
         Bezier:false}; //Polygon, GLeg, GLob, Bezier
 
+    let display_op = {
+        VelocityAtNodes:false,
+        EqParamPts:false}; //Polygon, GLeg, GLob, Bezier
+        
+    let npixel_unitlen = 100;
     //chart
     const labels = [
         'Polygon',
@@ -45,7 +55,7 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
           label: 'Length',
           backgroundColor: ['rgba(0, 0, 0, 0.2)', 'rgba(0, 0, 255)', 'rgba(255, 0, 0)', 'rgba(0, 0, 0)'],
           borderColor: ['rgb(0, 0, 0)','rgb(0, 0, 255)', 'rgb(255, 0, 0)', 'rgba(0, 0, 0)'],
-          data: [795.779, 697.953, 651.357, 418.043],
+          data: [7.95779, 6.97953, 6.51357, 4.18043],
         }]
     };
     
@@ -66,8 +76,22 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
         }
     }
 
+    function getDisplayOp() {
+        let c = document.getElementsByName("displayop");
+        for(let i = 0; i < c.length; i++) {
+            if(c[i].id=="EqParamDiv") {
+                ndiv_EqParamPts = parseInt(c[i].value);
+            } else if(c[i].id=="scale_velocity") {
+                scale_velos = parseFloat(c[i].value);
+            } else {
+                display_op[c[i].value] = c[i].checked;
+            }
+        }
+    }
+
     function ClickCheck(e) {
         getCurveTypes();
+        getDisplayOp();
         DrawSVG();
     }
 
@@ -122,7 +146,8 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 
         if(svg) {
             // let main = svg.getElementById("main");
-            let c = svg.getElementsByTagName("circle");
+            // let c = svg.getElementsByTagName("circle");
+            let c = main.getElementsByTagName("circle");
             // let lastpt = svg.getElementById(c[c.length-1].id);
             let lastpt = c[c.length-1];
             let parent = lastpt.parentNode; // parent == main
@@ -164,7 +189,8 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
         let c, i, m;
         m = Math.min(n, ptCount);
 
-        c = svg.getElementsByTagName("circle");
+        // c = svg.getElementsByTagName("circle");
+        c = main.getElementsByTagName("circle");
     	for (i = 0; i < m; i++) {
             c[i].setAttributeNS(null, "cx", ctlptlist[i][0]);
             c[i].setAttributeNS(null, "cy", ctlptlist[i][1]);
@@ -186,7 +212,8 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 
     // construct points
     function construct_points() {
-        var c = svg.getElementsByTagName("circle");
+        // var c = svg.getElementsByTagName("circle");
+        var c = main.getElementsByTagName("circle");
         point = {};
         ptCount = c.length;
         ndeg = ptCount - 1;
@@ -201,10 +228,14 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 	// define initial points
 	function Init() {
 
+        main = svg.getElementById("main");
+        sub = svg.getElementById("sub");
+
 		// var c = svg.getElementsByTagName("circle");
 		construct_points();
         nextptid = ptCount;
         getCurveTypes();
+        getDisplayOp();
 		
 		// lines
         pg = svg.getElementById("pg1");
@@ -238,6 +269,12 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
         let chkboxes = document.getElementsByName("curvetype");
         for(let i=0; i < chkboxes.length; i++) {
             chkboxes[i].onclick = ClickCheck;
+        }
+
+        chkboxes = document.getElementsByName("displayop");
+        for(let i=0; i < chkboxes.length; i++) {
+            chkboxes[i].onclick = ClickCheck;
+            chkboxes[i].onchange = ClickCheck;
         }
 		
 
@@ -318,7 +355,9 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
             // }
         }
 
-        let circles = svg.getElementsByTagName("circle");
+        // let circles = svg.getElementsByTagName("circle");
+        let circles = main.getElementsByTagName("circle");
+        
         let circol = curve_type.Polygon ? "red": "white";
         for(let i=0; i < circles.length; i++) {
             circles[i].style.stroke = circol;
@@ -334,9 +373,23 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
         // let ndivSimpson = 100;
         let ndivSimpson = Math.floor(ndiv/2)+1;
 
+        removeSVGElementsByTagName(sub, "circle");
+        removeSVGElementsByTagName(sub, "line");
+
         if(curve_type.GLeg) {
             d = getSVG_controlPoly(GLegPolyList, ctlptlist, ndiv);
             GLegLen = getArcLengthFromPolyDerivSimpson(GLegPolyDList[ndeg-1], ctlptlist, -1,1,ndivSimpson);
+            
+            if(display_op.EqParamPts) {
+                let onpts = getCurvePts(GLegPolyList, ctlptlist, ndiv_EqParamPts);
+                addSVGCircles(sub, onpts, radius_ParamPts, "glegcircle");
+            }
+
+            if(display_op.VelocityAtNodes) {
+            let velos = getVelocityAtNodes(GLegPolyList[ndeg-1],GLegPolyDList[ndeg-1], ctlptlist, GLegNW[ndeg-1][0] );
+            addSVGArrows(sub, velos, scale_velos, "velocity");
+            }
+
         } else {
             d = "M"+point.p0.x+","+point.p0.y;
             GLegLen = 0;
@@ -346,6 +399,17 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
         if(curve_type.GLob && ptCount > 2) {
             d = getSVG_controlPoly(GLobPolyList, ctlptlist, ndiv);
             GLobLen = getArcLengthFromPolyDerivSimpson(GLobPolyDList[ndeg-1], ctlptlist, -1,1,ndivSimpson);
+
+            if(display_op.EqParamPts) {
+                let onpts = getCurvePts(GLobPolyList, ctlptlist, ndiv_EqParamPts);
+                addSVGCircles(sub, onpts, radius_ParamPts, "globcircle");
+            }
+
+            if(display_op.VelocityAtNodes) {
+                let velos = getVelocityAtNodes(GLobPolyList[ndeg-1],GLobPolyDList[ndeg-1], ctlptlist, GLobNW[ndeg-1][0] );
+                addSVGArrows(sub, velos, scale_velos, "velocity");
+            }
+
         } else {
             d = "M"+point.p0.x+","+point.p0.y;
             GLobLen = 0;
@@ -368,17 +432,24 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 		// show code
 		if (code) {
 			// code.textContent = '<path d="'+d+'" />';
-            code.textContent = ctlptlist;
+            let strpt = "";
+            for(let i=0; i < ctlptlist.length; i++) {
+                if(i>0) strpt += ", ";
+                strpt += "[" + ctlptlist[i][0]/npixel_unitlen + "," + ctlptlist[i][1]/npixel_unitlen + "]";
+            }
+            code.textContent = strpt;
 		}
 
         //curve length
         // data.data[0] = polylength;
         // myChart.data.data[0] = polylength;
-        myChart.data.datasets[0].data[0] = polygonLen;
-        myChart.data.datasets[0].data[1] = GLegLen;
-        myChart.data.datasets[0].data[2] = GLobLen;
-        myChart.data.datasets[0].data[3] = BezierLen;
+        myChart.data.datasets[0].data[0] = polygonLen/npixel_unitlen;
+        myChart.data.datasets[0].data[1] = GLegLen/npixel_unitlen;
+        myChart.data.datasets[0].data[2] = GLobLen/npixel_unitlen;
+        myChart.data.datasets[0].data[3] = BezierLen/npixel_unitlen;
         myChart.update();
+
+        //sub
 	}
 	
 	

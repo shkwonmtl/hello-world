@@ -22,7 +22,17 @@
 <input name = "curvetype" type="checkbox" value="Polygon" checked> Control Polygon
 <div style="color:blue;"> <input name = "curvetype" type="checkbox" value="GLeg" checked> Gauss-Legendre curve </div>
 <div style="color:red;"> <input name = "curvetype" type="checkbox" value="GLob"> Gauss-Lobatto curve </div>
-<div style="color:black;"> </div><input name = "curvetype" type="checkbox" value="Bezier"> B&#233;zier curve </div>
+<div style="color:black;"> <input name = "curvetype" type="checkbox" value="Bezier"> B&#233;zier curve </div>
+
+<h2> Select display options: </h2>
+<input id="chkv" name = "displayop" type="checkbox" value="VelocityAtNodes"> Velocity at nodes
+<label> (scale: </label>
+<input id="scale_velocity" name="displayop" type="number" value="0.2" min="0.01" max="2" step="0.01">)
+
+<p></p>
+<input id="chkEq" name = "displayop" type="checkbox" value="EqParamPts"> Equi. Parametric Pts. 
+<label> (nDiv: </label>
+<input id="EqParamDiv" name="displayop" type="number" value="20" min="2" max="100">)
 
 <h2> Add/Remove control points: </h2>
 <input id = "addbtn" type="button" value="add a point" onclick="">
