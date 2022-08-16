@@ -85,7 +85,8 @@ circle
 {
 	stroke-width: 2;
 	stroke: #c00;
-	fill: #fff;
+	/* fill: #fff; */
+    fill: none;
 }
 
 circle:hover

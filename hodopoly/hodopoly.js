@@ -357,10 +357,11 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 
         // let circles = svg.getElementsByTagName("circle");
         let circles = main.getElementsByTagName("circle");
-        
         let circol = curve_type.Polygon ? "red": "white";
+        let opacity = curve_type.Polygon ? 1: 0;
         for(let i=0; i < circles.length; i++) {
             circles[i].style.stroke = circol;
+            circles[i].style["stroke-opacity"] = opacity;
         }
 
         //curves
