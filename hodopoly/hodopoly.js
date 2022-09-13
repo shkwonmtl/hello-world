@@ -254,6 +254,10 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 		// event handlers
 		svg.onmousedown = svg.onmousemove = svg.onmouseup = Drag;
 		svg.ontouchstart = svg.ontouchmove = svg.ontouchend = Drag;
+        // svg.addEventListener("touchstart", Drag, {passive:false} );
+        // svg.addEventListener("touchmove", Drag, {passive:false} );
+        // svg.addEventListener("touchend", Drag, {passive:false} );
+        
         let btn = document.getElementById("addbtn");
         // btn.setAttribute("onClick", "addpoint()");
         btn.onclick = ClickAddPoint;
@@ -420,6 +424,11 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
         if(curve_type.Bezier) {
             d = getSVG_controlPoly(BernPolyList, ctlptlist, ndiv);
             BezierLen = getArcLengthFromPolyDerivSimpson(BernPolyDList[ndeg-1], ctlptlist, -1,1,ndivSimpson);
+
+            if(display_op.EqParamPts) {
+                let onpts = getCurvePts(BernPolyList, ctlptlist, ndiv_EqParamPts);
+                addSVGCircles(sub, onpts, radius_ParamPts, "beziercircle");
+            }
         } else {
             d = "M"+point.p0.x+","+point.p0.y;
             BezierLen = 0;
@@ -458,6 +467,9 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 	function Drag(e) {
         
 		e.stopPropagation();
+        // e.preventDefault();
+        // e.stopImmediatePropagation();
+
 		var t = e.target, id = t.id, et = e.type, m = MousePos(e);
 	
 		// toggle fill class
@@ -469,6 +481,10 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 	
 		// start drag
 		if (!drag && typeof(point[id]) != "undefined" && (et == "mousedown" || et == "touchstart")) {
+            // if(et == "touchstart") {
+            //     e.preventDefault();
+            //     e.stopImmediatePropagation();
+            // }
 			drag = t;
 			dPoint = m;
             // if(e.shiftKey) console.log("mouse+shift:" + id);
@@ -487,6 +503,10 @@ import {GLegF, GLobF, BernF, Poly, polyEval, getBarySum, constructPolyList, getD
 		
 		// drag
 		if (drag && (et == "mousemove" || et == "touchmove")) {
+            // if(et == "touchmove") {
+            //     e.preventDefault();
+            //     e.stopImmediatePropagation();
+            // }
 			id = drag.id;
 			point[id].x += m.x - dPoint.x;
 			point[id].y += m.y - dPoint.y;

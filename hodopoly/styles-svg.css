@@ -53,6 +53,13 @@
 	fill:red;
 }
 
+.beziercircle
+{
+	stroke-width: 2;
+	stroke: black;
+	fill:black;	
+}
+
 .velocity
 {
     stroke:#000;
